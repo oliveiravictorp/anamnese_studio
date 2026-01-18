@@ -8,6 +8,8 @@ defmodule AnamneseStudio.Organizations do
 
   alias AnamneseStudio.Organizations.Organization
   alias AnamneseStudio.Accounts.Scope
+  alias AnamneseStudio.Memberships.Membership
+  alias Ecto.Multi
 
   @doc """
   Subscribes to scoped notifications about any organization changes.
@@ -41,7 +43,15 @@ defmodule AnamneseStudio.Organizations do
 
   """
   def list_organizations(%Scope{} = scope) do
-    Repo.all_by(Organization, owner_id: scope.user.id)
+    query =
+      from(o in Organization,
+        join: m in Membership,
+        on: m.organization_id == o.id,
+        where: m.user_id == ^scope.user.id,
+        select: o
+      )
+
+    Repo.all(query)
   end
 
   @doc """
@@ -75,12 +85,31 @@ defmodule AnamneseStudio.Organizations do
 
   """
   def create_organization(%Scope{} = scope, attrs) do
-    with {:ok, organization = %Organization{}} <-
-           %Organization{}
-           |> Organization.changeset(attrs, scope)
-           |> Repo.insert() do
-      broadcast_organization(scope, {:created, organization})
-      {:ok, organization}
+    changeset = Organization.changeset(%Organization{}, attrs, scope)
+
+    multi =
+      Multi.new()
+      |> Multi.insert(:organization, changeset)
+      |> Multi.run(:membership, fn repo, %{organization: org} ->
+        membership_attrs = %{
+          organization_id: org.id,
+          user_id: scope.user.id,
+          role: "owner",
+          joined_at: DateTime.utc_now()
+        }
+
+        %Membership{}
+        |> Membership.changeset(membership_attrs)
+        |> repo.insert()
+      end)
+
+    case Repo.transaction(multi) do
+      {:ok, %{organization: organization}} ->
+        broadcast_organization(scope, {:created, organization})
+        {:ok, organization}
+
+      {:error, _step, changeset, _effects} ->
+        {:error, changeset}
     end
   end
 
