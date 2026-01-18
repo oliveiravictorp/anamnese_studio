@@ -54,6 +54,10 @@ defmodule AnamneseStudioWeb.Router do
       on_mount: [{AnamneseStudioWeb.UserAuth, :require_authenticated}] do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
+      live "/organizations", OrganizationLive.Index, :index
+      live "/organizations/new", OrganizationLive.Form, :new
+      live "/organizations/:id", OrganizationLive.Show, :show
+      live "/organizations/:id/edit", OrganizationLive.Form, :edit
     end
 
     post "/users/update-password", UserSessionController, :update_password
