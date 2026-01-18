@@ -1,8 +1,7 @@
-defmodule AnamneseStudioWeb.UserHomeLive do
+defmodule AnamneseStudioWeb.UserLive.Home do
   use AnamneseStudioWeb, :live_view
 
   alias AnamneseStudio.Organizations
-  alias AnamneseStudio.Accounts.Scope
 
   @impl true
   def mount(_params, _session, socket) do
@@ -11,7 +10,7 @@ defmodule AnamneseStudioWeb.UserHomeLive do
 
     socket =
       socket
-      |> assign(:page_title, "Selecione organização")
+      |> assign(:page_title, "Oganizações")
       |> assign(:organizations, organizations)
 
     {:ok, socket}
@@ -23,18 +22,19 @@ defmodule AnamneseStudioWeb.UserHomeLive do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
         {@page_title}
-        <:subtitle>Selecione uma organização ou crie uma nova.</:subtitle>
+        <:subtitle>Selecione uma organização, crie uma nova ou aguarde um convite.</:subtitle>
+        <:actions>
+          <.button variant="primary" navigate={~p"/organizations/new"}>
+            <.icon name="hero-plus" /> Criar organização
+          </.button>
+        </:actions>
       </.header>
 
       <div class="px-6 py-4">
         <%= if @organizations == [] do %>
           <div class="text-gray-600">Você ainda não pertence a nenhuma organização.</div>
-          <div class="mt-4">
-            <.link navigate={~p"/organizations/new"} class="btn btn-primary">Criar organização</.link>
-          </div>
         <% else %>
           <div class="space-y-3">
-            <.link navigate={~p"/organizations/new"} class="btn">Criar nova organização</.link>
             <div class="mt-4">
               <ul>
                 <%= for org <- @organizations do %>

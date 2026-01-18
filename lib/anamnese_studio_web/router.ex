@@ -52,9 +52,10 @@ defmodule AnamneseStudioWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{AnamneseStudioWeb.UserAuth, :require_authenticated}] do
+      live "/users/home", UserLive.Home, :index
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
-      live "/user/home", UserHomeLive, :index
+
       live "/organizations", OrganizationLive.Index, :index
       live "/organizations/new", OrganizationLive.Form, :new
       live "/organizations/:id", OrganizationLive.Show, :show

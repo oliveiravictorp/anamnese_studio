@@ -113,6 +113,6 @@ defmodule AnamneseStudioWeb.OrganizationLive.Form do
     end
   end
 
-  defp return_path(_scope, "index", _organization), do: ~p"/organizations"
+  defp return_path(_scope, "index", _organization), do: ~p"/users/home"
   defp return_path(_scope, "show", organization), do: ~p"/organizations/#{organization}"
 end

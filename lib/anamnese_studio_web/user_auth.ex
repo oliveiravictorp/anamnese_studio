@@ -259,9 +259,9 @@ defmodule AnamneseStudioWeb.UserAuth do
   @doc "Returns the path to redirect to after log in."
   # redirect signed-in users to the app user home
   def signed_in_path(%Plug.Conn{assigns: %{current_scope: %Scope{user: %Accounts.User{}}}}),
-    do: ~p"/user/home"
+    do: ~p"/users/home"
 
-  def signed_in_path(_), do: ~p"/"
+  def signed_in_path(_), do: ~p"/users/home"
 
   @doc """
   Plug for routes that require the user to be authenticated.

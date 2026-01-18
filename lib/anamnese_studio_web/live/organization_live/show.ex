@@ -11,10 +11,13 @@ defmodule AnamneseStudioWeb.OrganizationLive.Show do
         Organization {@organization.id}
         <:subtitle>This is a organization record from your database.</:subtitle>
         <:actions>
-          <.button navigate={~p"/organizations"}>
+          <.button navigate={~p"/users/home"}>
             <.icon name="hero-arrow-left" />
           </.button>
-          <.button variant="primary" navigate={~p"/organizations/#{@organization}/edit?return_to=show"}>
+          <.button
+            variant="primary"
+            navigate={~p"/organizations/#{@organization}/edit?return_to=show"}
+          >
             <.icon name="hero-pencil-square" /> Edit organization
           </.button>
         </:actions>
@@ -58,7 +61,7 @@ defmodule AnamneseStudioWeb.OrganizationLive.Show do
     {:noreply,
      socket
      |> put_flash(:error, "The current organization was deleted.")
-     |> push_navigate(to: ~p"/organizations")}
+     |> push_navigate(to: ~p"/users/home")}
   end
 
   def handle_info({type, %AnamneseStudio.Organizations.Organization{}}, socket)
