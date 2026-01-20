@@ -4,8 +4,20 @@ defmodule AnamneseStudioWeb.OrganizationLiveTest do
   import Phoenix.LiveViewTest
   import AnamneseStudio.OrganizationsFixtures
 
-  @create_attrs %{active: true, name: "some name", plan: "some plan", slug: "some slug", max_users: 42}
-  @update_attrs %{active: false, name: "some updated name", plan: "some updated plan", slug: "some updated slug", max_users: 43}
+  @create_attrs %{
+    active: true,
+    name: "some name",
+    plan: "some plan",
+    slug: "some slug",
+    max_users: 42
+  }
+  @update_attrs %{
+    active: false,
+    name: "some updated name",
+    plan: "some updated plan",
+    slug: "some updated slug",
+    max_users: 43
+  }
   @invalid_attrs %{active: false, name: nil, plan: nil, slug: nil, max_users: nil}
 
   setup :register_and_log_in_user
@@ -45,7 +57,7 @@ defmodule AnamneseStudioWeb.OrganizationLiveTest do
                form_live
                |> form("#organization-form", organization: @create_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/organizations")
+               |> follow_redirect(conn, ~p"/users/home")
 
       html = render(index_live)
       assert html =~ "Organization created successfully"
@@ -71,7 +83,7 @@ defmodule AnamneseStudioWeb.OrganizationLiveTest do
                form_live
                |> form("#organization-form", organization: @update_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/organizations")
+               |> follow_redirect(conn, ~p"/users/home")
 
       html = render(index_live)
       assert html =~ "Organization updated successfully"
@@ -81,7 +93,10 @@ defmodule AnamneseStudioWeb.OrganizationLiveTest do
     test "deletes organization in listing", %{conn: conn, organization: organization} do
       {:ok, index_live, _html} = live(conn, ~p"/organizations")
 
-      assert index_live |> element("#organizations-#{organization.id} a", "Delete") |> render_click()
+      assert index_live
+             |> element("#organizations-#{organization.id} a", "Delete")
+             |> render_click()
+
       refute has_element?(index_live, "#organizations-#{organization.id}")
     end
   end
